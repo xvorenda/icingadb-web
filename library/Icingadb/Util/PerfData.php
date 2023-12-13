@@ -501,12 +501,13 @@ class PerfData
 
     protected function calculatePieChartData(): array
     {
-        $rawValue = $this->getValue();
-        $minValue = $this->getMinimumValue() !== null ? $this->getMinimumValue() : 0;
-        $usedValue = ($rawValue - $minValue);
-
+        $rawValue = (float) $this->getValue(); // Cast to float
+        $minValue = $this->getMinimumValue() !== null ? (float) $this->getMinimumValue() : 0; // Cast to float
+        $maxValue = (float) $this->getMaximumValue(); // Cast to float
+        $usedValue = $rawValue - $minValue;
+    
         $green = $orange = $red = 0;
-
+    
         if ($this->criticalThreshold->contains($rawValue)) {
             if ($this->warningThreshold->contains($rawValue)) {
                 $green = $usedValue;
@@ -516,10 +517,9 @@ class PerfData
         } else {
             $red = $usedValue;
         }
-
-        return array($green, $orange, $red, ($this->getMaximumValue() - $minValue) - $usedValue);
+    
+        return array($green, $orange, $red, $maxValue - $minValue - $usedValue);
     }
-
 
     public function asInlinePie(): InlinePie
     {
